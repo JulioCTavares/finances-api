@@ -1,23 +1,28 @@
-import fastify from "fastify";
+import fastify from 'fastify'
+import { registerErrorMiddleware } from './config/middlewares'
+import { authRoutes } from './presentation/routes/auth/routes'
 
 export const server = fastify({
-  logger: true,
-});
+    logger: true,
+})
 
-server.get("/health", (req, reply) => {
-  return reply.send({ message: "Its alive" });
-});
+server.get('/health', (req, reply) => {
+    return reply.send({ message: 'Its alive' })
+})
+
+server.register(authRoutes)
+registerErrorMiddleware(server)
 
 server.listen(
-  {
-    port: 4000,
-    host: "0.0.0.0",
-  },
-  (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);
-  }
-);
+    {
+        port: 4000,
+        host: '0.0.0.0',
+    },
+    (err, address) => {
+        if (err) {
+            console.error(err)
+            process.exit(1)
+        }
+        console.log(`Server listening at ${address}`)
+    },
+)
