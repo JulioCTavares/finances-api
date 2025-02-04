@@ -1,4 +1,5 @@
 import fastify from 'fastify'
+import { registerJWT } from './config/jwt/jwt'
 import { registerErrorMiddleware } from './config/middlewares'
 import { authRoutes } from './presentation/routes/auth/routes'
 
@@ -10,6 +11,7 @@ server.get('/health', (req, reply) => {
     return reply.send({ message: 'Its alive' })
 })
 
+registerJWT(server)
 server.register(authRoutes)
 registerErrorMiddleware(server)
 
