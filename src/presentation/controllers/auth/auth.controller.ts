@@ -23,4 +23,19 @@ export class AuthController {
             createdAt: user.createdAt,
         })
     }
+
+    static async login(req: FastifyRequest, rep: FastifyReply) {
+        const loginSchema = z.object({
+            email: z.string().email(),
+            password: z.string().min(6),
+        })
+
+        const { email, password } = loginSchema.parse(req.body)
+
+        const useCase = Dependencies.getLoginUseCase()
+
+        const { token } = await useCase.execute({ email, password })
+
+        return rep.send({ token })
+    }
 }
