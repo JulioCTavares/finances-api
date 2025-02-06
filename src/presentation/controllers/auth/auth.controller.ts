@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
+import { BadRequestException } from '../../../shared/errors'
 import { Dependencies } from '../dependencies'
 
 export class AuthController {
@@ -34,8 +35,26 @@ export class AuthController {
 
         const useCase = Dependencies.getLoginUseCase()
 
-        const { token } = await useCase.execute({ email, password })
+        const { access_token, refresh_token } = await useCase.execute({
+            email,
+            password,
+        })
 
-        return rep.send({ token })
+        return rep.send({ access_token, refresh_token })
+    }
+
+    static async refreshToken(req: FastifyRequest, rep: FastifyReply) {
+        const authHeader = req.headers.authorization
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new BadRequestException('Refresh token is required')
+        }
+
+        const refreshToken = authHeader.split(' ')[1]
+
+        const useCase = Dependencies.getRefreshTokenUseCase()
+
+        const result = await useCase.execute(refreshToken)
+
+        return rep.send(result)
     }
 }

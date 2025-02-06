@@ -8,7 +8,15 @@ export class FastifyJwtService implements JwtService {
         return this.app.jwt.sign(payload)
     }
 
-    verify(token: string): string {
+    signRefresh(payload: object): string {
+        return this.app.refreshJwt.sign(payload)
+    }
+
+    verify(token: string): any {
         return this.app.jwt.verify(token)
+    }
+
+    verifyRefresh(token: string): any {
+        return this.app.refreshJwt.verify(token)
     }
 }

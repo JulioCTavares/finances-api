@@ -1,3 +1,4 @@
+import { SessionRepository } from '../../../domain/repository/session/session-repository'
 import { UserRepository } from '../../../domain/repository/user/user-repository'
 import { UnauthorizedException } from '../../../shared/errors'
 import { JwtService } from '../../../shared/security/jwt-services'
@@ -9,7 +10,8 @@ interface LoginRequest {
 }
 
 interface LoginResponse {
-    token: string
+    access_token: string
+    refresh_token: string
 }
 
 export class LoginUseCase {
@@ -17,6 +19,7 @@ export class LoginUseCase {
         private userRepository: UserRepository,
         private passwordHasher: PasswordHasher,
         private jwtService: JwtService,
+        private refreshTokenRepository: SessionRepository,
     ) {}
 
     async execute({ email, password }: LoginRequest): Promise<LoginResponse> {
@@ -36,9 +39,22 @@ export class LoginUseCase {
         }
 
         const token = this.jwtService.sign({ id: user.id })
+        const refreshToken = this.jwtService.signRefresh({
+            userId: user.id,
+            type: 'refresh',
+        })
+
+        await this.refreshTokenRepository.create({
+            id: null,
+            userId: user.id ?? '',
+            token: refreshToken,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            revoked: false,
+        })
 
         return {
-            token,
+            access_token: token,
+            refresh_token: refreshToken,
         }
     }
 }

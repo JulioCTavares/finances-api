@@ -1,4 +1,6 @@
 export interface JwtService {
     sign(payload: object): string
-    verify(token: string): string
+    signRefresh(payload: object): string
+    verify<T extends object>(token: string): T
+    verifyRefresh<T extends object>(token: string): T
 }

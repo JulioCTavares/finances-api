@@ -1,19 +1,20 @@
 import fastify from 'fastify'
 import { registerJWT } from './config/jwt/jwt'
 import { registerErrorMiddleware } from './config/middlewares'
+import { authMiddleware } from './config/middlewares/auth-middleware'
 import { authRoutes } from './presentation/routes/auth/routes'
 
 export const server = fastify({
     logger: true,
 })
 
-server.get('/health', (req, reply) => {
-    return reply.send({ message: 'Its alive' })
-})
-
 registerJWT(server)
 server.register(authRoutes)
 registerErrorMiddleware(server)
+
+server.get('/health', { preHandler: authMiddleware }, (req, reply) => {
+    return reply.send({ message: 'Its alive' })
+})
 
 server.listen(
     {
