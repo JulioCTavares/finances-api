@@ -1,16 +1,16 @@
 services:
-  finances_db:
-    image: bitnami/postgresql
-    container_name: finances_db
-    restart: unless-stopped
-    ports:
-      - "${DATABASE_PORT:?DATABASE_PORT env var is missing on .env file}:5432"
-    environment:
-      POSTGRES_PASSWORD: "${DATABASE_PASSWORD:?DATABASE_PASSWORD env var is missing on .env file}"
-      POSTGRES_USERNAME: "${DATABASE_USERNAME:?DATABASE_USERNAME env var is missing on .env file}"
-      POSTGRES_DATABASE: "${DATABASE_NAME:?DATABASE_NAME env var is missing on .env file}"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    finances_db:
+        image: bitnami/postgresql
+        container_name: finances_db
+        restart: unless-stopped
+        ports:
+            - '${DATABASE_PORT:?DATABASE_PORT env var is missing on .env file}:5432'
+        environment:
+            POSTGRES_PASSWORD: '${DATABASE_PASSWORD:?DATABASE_PASSWORD env var is missing on .env file}'
+            POSTGRES_USERNAME: '${DATABASE_USERNAME:?DATABASE_USERNAME env var is missing on .env file}'
+            POSTGRES_DATABASE: '${DATABASE_NAME:?DATABASE_NAME env var is missing on .env file}'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+    postgres_data:
